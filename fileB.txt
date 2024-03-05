@@ -1,0 +1,32 @@
+
+// 1.	here is the code implement this in Python Class
+
+
+Python class:
+
+python
+
+class MinitermGenerator:
+
+    def __init__(self, relations):
+
+        self.relations = relations
+
+
+    def generate_horizontal_fragments(self):
+
+        fragments = []
+
+        for relation in self.relations:
+
+            fragment = f"HORIZONTAL {relation.name}("
+
+            for predicate in relation.predicates:
+
+                fragment += f"{predicate.name},"
+
+            fragment = fragment.rstrip(',') + ")"
+
+            fragments.append(fragment)
+
+        return fragments

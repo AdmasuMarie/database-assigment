@@ -1,0 +1,71 @@
+// 2.	Here is the code implement this in PL SQL  Class 
+
+PL SQL class:
+
+sql
+
+CREATE OR REPLACE TYPE relation_t AS OBJECT (
+
+    name VARCHAR2(255),
+
+    predicates relation_predicate_t[]
+
+);
+
+
+CREATE OR REPLACE TYPE relation_predicate_t AS OBJECT (
+
+    name VARCHAR2(255)
+
+);
+
+
+CREATE OR REPLACE TYPE miniterm_fragment_t AS OBJECT (
+
+    fragment VARCHAR2(4000)
+
+);
+
+
+CREATE OR REPLACE TYPE miniterm_generator_t AS OBJECT (
+
+    relations relation_t[],
+
+    FUNCTION generate_horizontal_fragments RETURN miniterm_fragment_t[]
+
+);
+
+
+CREATE OR REPLACE TYPE BODY miniterm_generator_t AS
+
+    FUNCTION generate_horizontal_fragments RETURN miniterm_fragment_t[] IS
+
+        fragments miniterm_fragment_t[];
+
+    BEGIN
+
+        FOR i IN 1 .. self.relations.COUNT LOOP
+
+            fragment := miniterm_fragment_t(NULL);
+
+            fragment.fragment := 'HORIZONTAL ' || self.relations(i).name || '(';
+
+            FOR j IN 1 .. self.relations(i).predicates.COUNT LOOP
+
+                fragment.fragment := fragment.fragment || self.relations(i).predicates(j).name || ',';
+
+            END LOOP;
+
+            fragment.fragment := RTRIM(fragment.fragment, ',') || ')';
+
+            fragments.EXTEND;
+
+            fragments(fragments.COUNT) := fragment;
+
+        END LOOP;
+
+        RETURN fragments;
+
+    END;
+
+END;
